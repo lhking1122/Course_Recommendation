@@ -1,57 +1,58 @@
 const db = require('../db');
 
 exports.getProgress = async (req, res, next) => {
-    let { userId } = req.params;
+    const userId = Number.parseInt(req.params.userId, 10);
     try {
-        userId = parseInt(userId)
-        const user = await databaseGetProgress(userId)
-        if (!user) return res.status(200).json({success: false, error: "User does not exist"})
+        const user = await databaseGetProgress(userId);
+        if (!user) return res.status(404).json({ success: false, error: 'User does not exist' });
 
         res.status(200).json({
-            userId, 
-            courseProgress: JSON.parse(user.course_progress),
-            courses: JSON.parse(user.courses),
+            userId,
+            courseProgress: parseJson(user.course_progress, {}),
+            courses: parseJson(user.courses, []),
             success: true
-        })
+        });
     } catch (err) {
-        res.status(500).json({success: false, error: err.message})
-        next(err)
+        next(err);
     }
 }
 
 exports.setProgress = async (req, res, next) => {
-    let { userId, courseProgress, courses } = req.body
+    const { courseProgress, courses } = req.body;
+    const userId = Number.parseInt(req.body.userId, 10);
     try {
-        console.log(req.body)
-        userId = parseInt(userId)
-        
-        const dbStatus = await databaseSetProgress(userId, courseProgress, courses)
-        if (!dbStatus) res.status(500).json({success: false, error: "Could not set progress in DB"})
-        else res.status(200).json({success: true})
+        const changes = await databaseSetProgress(userId, courseProgress, courses);
+        if (changes === 0) return res.status(404).json({ success: false, error: 'User does not exist' });
+        res.status(200).json({ success: true });
     } catch (err) {
-        res.status(500).json({success: false, error: err.message})
-        next(err)
+        next(err);
     }
 }
 
 exports.deleteProgress = async (req, res, next) => {
-    let { userId } = req.params;
+    const userId = Number.parseInt(req.params.userId, 10);
     try {
-        userId = parseInt(userId)
-        
-        const dbStatus = await databaseSetProgress(userId, null, null)
-        if (!dbStatus) res.status(500).json({success: false, error: "Could not delete progress in DB"})
-        else res.status(200).json({success: true})
+        const changes = await databaseSetProgress(userId, null, null);
+        if (changes === 0) return res.status(404).json({ success: false, error: 'User does not exist' });
+        res.status(200).json({ success: true });
     } catch (err) {
-        res.status(500).json({success: false, error: err.message})
-        next(err)
+        next(err);
+    }
+}
+
+function parseJson(value, fallback) {
+    if (!value) return fallback;
+    try {
+        return JSON.parse(value);
+    } catch {
+        return fallback;
     }
 }
 
 function databaseSetProgress(userId, courseProgress, courses) {
-    const courseProgresStr = courseProgress ? JSON.stringify(courseProgress) : null
-    const coursesStr = courses ? JSON.stringify(courses) : null
-    
+    const courseProgressStr = courseProgress ? JSON.stringify(courseProgress) : null;
+    const coursesStr = courses ? JSON.stringify(courses) : null;
+
     return new Promise((resolve, reject) => {
         db.run(
             `UPDATE users
@@ -63,14 +64,13 @@ function databaseSetProgress(userId, courseProgress, courses) {
                 coursesStr,
                 userId
             ],
-            err => {
+            function (err) {
                 if (err) {
-                    console.error(err)
-                    reject(err)
-                } else resolve(true)
+                    reject(err);
+                } else resolve(this.changes);
             }
         );
-    })
+    });
 }
 
 function databaseGetProgress(userId) {
@@ -85,10 +85,9 @@ function databaseGetProgress(userId) {
             ],
             (err, user) => {
                 if (err) {
-                    console.error(err)
-                    reject(err)
-                } else resolve(user)
+                    reject(err);
+                } else resolve(user);
             }
-        );    
-    })
+        );
+    });
 }

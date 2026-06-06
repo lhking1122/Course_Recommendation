@@ -1,6 +1,6 @@
 const db = require('../db');
 
-exports.getDetails = async (req, res, next) => {
+exports.getDetails = (req, res, next) => {
   db.all(
     `SELECT * FROM courses`,
     (err, courses) => {
@@ -10,10 +10,13 @@ exports.getDetails = async (req, res, next) => {
   )
 };
 
-exports.getAvg = async (req, res, next) => {
+exports.getAvg = (req, res, next) => {
   const courseId = req.params.courseId;
   db.get(
-    `Select AVG(rating) as avg FROM courses c, reviews r WHERE c.id = ? AND c.id = r.course_id`,
+    `SELECT AVG(r.rating) AS avg
+     FROM courses c
+     JOIN reviews r ON c.id = r.course_id
+     WHERE c.id = ?`,
     [courseId],
     (err, rating) => {
       if (err) return next(err);

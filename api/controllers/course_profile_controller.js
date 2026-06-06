@@ -1,6 +1,4 @@
-// api/controllers/course_profile_controller.js
 const db = require('../db');
-const user = require("../../src/DataStructure/User");
 
 exports.getProfile = (req, res, next) => {
     const uid = req.user.id;
@@ -16,12 +14,14 @@ exports.getProfile = (req, res, next) => {
         [uid],
         (err, user) => {
             if (err) return next(err);
+            if (!user) return res.status(404).json({ error: 'Profile not found' });
+
             try {
                 user.interests = JSON.parse(user.interests || '[]');
             } catch {
                 user.interests = [];
             }
-            res.json({user});
+            res.json({ user });
         }
     );
 };
@@ -58,7 +58,7 @@ exports.updateProfile = (req, res, next) => {
         ],
         function (err) {
             if (err) return next(err);
-            res.json({success: true});
+            res.json({ success: true });
         }
     );
 };

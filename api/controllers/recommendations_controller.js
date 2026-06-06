@@ -1,42 +1,39 @@
-require('dotenv').config()
+require('dotenv').config();
 const db = require('../db');
-const { GEMINI_API_KEY } = process.env
-const { GoogleGenAI, Type, createPartFromUri } = require("@google/genai")
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY })
-const completeCourseList = require('../../src/Services/course-details-page/complete_course_list.json')
+const { GoogleGenAI, Type } = require('@google/genai');
+const completeCourseList = require('../../src/Services/course-details-page/complete_course_list.json');
+
+const { GEMINI_API_KEY } = process.env;
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+const courseListJson = JSON.stringify(completeCourseList);
 
 exports.getRecommendations = async (req, res, next) => {
-    let { userId, userInterests } = req.body;
+    const { userInterests } = req.body;
+    const userId = Number.parseInt(req.body.userId, 10);
+
     try {
-        userId = parseInt(userId)
-        const user = await databaseGetCourses(userId)
-        if (!user) return res.status(500).json({success: false, error: "Could not find courses for user"})
+        const user = await databaseGetCourses(userId);
+        if (!user) return res.status(404).json({ success: false, error: 'Could not find courses for user' });
 
-        const courses = JSON.parse(user.courses) || []
-        console.log(userId, courses, userInterests)
+        const courses = parseJson(user.courses, []);
+        const prompt = getPrompt(courses, userInterests);
+        const response = await queryLLM(prompt);
 
-        const prompt = getPrompt(courses, userInterests)
-        // console.log(prompt)
-        const response = await queryLLM(prompt)
-        res.status(200).json({ response, success: true} )
+        res.status(200).json({ response, success: true });
     } catch (err) {
-        res.status(500).json({success: false, error: err})
-        next(err)
+        next(err);
     }
-}
+};
 
 function getPrompt(courses, userInterests) {
-    const prompt = "Given the following courses taken, interests, and course description list, construct a list of 4-6 recommended courses for this student, along with a short reasoning. Make sure to check course prerequisites, if mentioned.\n" +
+    return "Given the following courses taken, interests, and course description list, construct a list of 4-6 recommended courses for this student, along with a short reasoning. Make sure to check course prerequisites, if mentioned.\n" +
     `Courses taken: ${courses.join(', ')}\n` +
-    `Interests: ${userInterests}\n` + 
-    "Course descriptions: ATTACHED BELOW\n" + 
+    `Interests: ${userInterests || 'None provided'}\n` +
+    "Course descriptions: ATTACHED BELOW\n" +
     "IMPORTANT NOTE: Responses are timed, so limit prose and stick to only the absolutely crucial analysis.\n\n" +
-    "COMPLETE COURSE LIST: \n" + 
-    JSON.stringify(completeCourseList)
-
-    return prompt
+    "COMPLETE COURSE LIST: \n" +
+    courseListJson;
 }
-
 
 async function queryLLM(prompt) {
     const config = {
@@ -61,14 +58,11 @@ async function queryLLM(prompt) {
           },
         },
       };
-    
+
     const model = 'gemini-2.5-flash-preview-04-17';
-    const contents = prompt //+ '\n\n' + createPartFromUri(myfile.uri, myfile.mimeType);
-    const response = await ai.models.generateContent({model, config, contents})
-    
-    if (response.candidates?.[0]?.content?.parts?.[0]?.text)
-      return response.candidates[0].content.parts[0].text
-    return null
+    const response = await ai.models.generateContent({ model, config, contents: prompt });
+
+    return response.candidates?.[0]?.content?.parts?.[0]?.text || null;
 }
 
 function databaseGetCourses(userId) {
@@ -82,10 +76,18 @@ function databaseGetCourses(userId) {
             ],
             (err, user) => {
                 if (err) {
-                    console.error(err)
-                    reject(err)
-                } else resolve(user)
+                    reject(err);
+                } else resolve(user);
             }
-        );    
-    })
+        );
+    });
+}
+
+function parseJson(value, fallback) {
+    if (!value) return fallback;
+    try {
+        return JSON.parse(value);
+    } catch {
+        return fallback;
+    }
 }

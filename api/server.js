@@ -1,50 +1,41 @@
-// api/server.js
 require('dotenv').config();
-const express       = require("express");
-const session       = require("express-session");
-const cors          = require('cors');
-const path          = require('path');
-const bcrypt        = require('bcrypt');
-const db            = require('./db');
+const express = require('express');
+const session = require('express-session');
+const cors = require('cors');
+const path = require('path');
+const bcrypt = require('bcrypt');
+const db = require('./db');
 
-const authRoutes    = require('./routes/auth');
+const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/course_profile');
 const detailsRouter = require('./routes/course_details');
-const progressRouter= require('./routes/course_progress');
+const progressRouter = require('./routes/course_progress');
 const reviewsRouter = require('./routes/course_reviews');
+const recommendationsRouter = require('./routes/recommendations');
 
-const app  = express();
-const PORT = 3000
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// ── Global middleware ─────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
 
-// ── Session middleware ────────────────────────────────────────────────────────
 app.use(session({
-    name:              'sid',
-    secret:            process.env.SESSION_SECRET || 'your-super-secret',
-    resave:            false,
+    name: 'sid',
+    secret: process.env.SESSION_SECRET || 'your-super-secret',
+    resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
-// ── Mount auth & profile routes ───────────────────────────────────────────────
-app.use('/api/auth',           authRoutes);
+
+app.use('/api/auth', authRoutes);
 app.use('/api/course_profile', profileRoutes);
 
-// ── Serve static (SPA) ───────────────────────────────────────────────────────
 app.use(
     express.static(path.join(__dirname, '../src'), {
         index: 'login.html'
     })
 );
 
-// —————————————
-// 2️⃣ Database setup (users.db in project root)
-// —————————————
-
-
-// ── Signup endpoint ───────────────────────────────────────────────────────────
 app.post('/api/signup', (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -77,11 +68,10 @@ app.post('/api/signup', (req, res) => {
             .catch(e => {
                 console.error('Signup bcrypt error:', e);
                 res.status(500).json({ success: false, message: 'Encryption error.' });
-            });
+        });
     });
 });
 
-// ── Login endpoint ────────────────────────────────────────────────────────────
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
 
@@ -113,61 +103,27 @@ app.post('/api/login', (req, res) => {
         }
     );
 });
-// ── Logout endpoint ───────────────────────────────────────────
+
 app.post('/api/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) return res.status(500).json({ error: 'Logout failed' });
-        // clear the cookie in the browser
         res.clearCookie('sid');
         res.json({ success: true });
     });
 });
-// // 1️⃣ custom root handler
-// app.get('/', (req, res) => {
-//     if (req.session.user) {
-//         res.sendFile(path.join(__dirname, '../src/index.html'));
-//     } else {
-//         res.sendFile(path.join(__dirname, '../src/login.html'));
-//     }
-// });
 
-// ── Other routers ─────────────────────────────────────────────────────────────
-app.use('/course-details',  detailsRouter);
+app.use('/course-details', detailsRouter);
 app.use('/course-progress', progressRouter);
-app.use('/course-reviews',  reviewsRouter);
-app.use('/course-profile',  profileRoutes);
-const recommendationsRouter  = require('./routes/recommendations')
-app.use('/recommendations', recommendationsRouter)
+app.use('/course-reviews', reviewsRouter);
+app.use('/course-profile', profileRoutes);
+app.use('/recommendations', recommendationsRouter);
 
-// catch all 404
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message || 'Server error' });
+});
 
-// // In-memory storage for demonstration purposes
-// let profileData = {};
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
-// // GET: Retrieve profile data
-// app.get('/profile', (req, res) => {
-//     res.json(profileData);
-// });
-
-// // POST: Create new profile data
-// app.post('/profile', express.json(), (req, res) => {
-//     profileData = req.body;
-//     res.status(201).json({ message: 'Profile created successfully', data: profileData });
-// });
-
-// // PUT: Update existing profile data
-// app.put('/profile', express.json(), (req, res) => {
-//     profileData = { ...profileData, ...req.body };
-//     res.json({ message: 'Profile updated successfully', data: profileData });
-// });
-
-// // DELETE: Delete profile data
-// app.delete('/profile', (req, res) => {
-//     profileData = {};
-//     res.json({ message: 'Profile deleted successfully' });
-// });
-
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
-
-module.exports = app
+module.exports = app;
