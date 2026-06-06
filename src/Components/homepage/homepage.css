@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.homepage-main {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 60px; /* spacing between sidebar and content */
+}
+
+/* Sidebar styling */
+.homepage-sidebar {
+    flex: 1;
+    max-width: 280px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.homepage-sidebar h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+.homepage-input {
+    margin-bottom: 15px;
+    margin-right: 20px;
+}
+
+.homepage-input label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.homepage-input input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.homepage-sidebar button {
+    padding: 10px 16px;
+    font-size: 14px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Recommendations section */
+.homepage-content {
+    /* padding-left: 5%; */
+    padding-right: 20%;
+    flex: 2;
+    margin-top: 10px;
+}
+
+.homepage-content h2 {
+    font-size: 22px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.homepage-recommendation {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.homepage-recommendation h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.homepage-recommendation p {
+    font-size: 14px;
+    color: #444;
+}

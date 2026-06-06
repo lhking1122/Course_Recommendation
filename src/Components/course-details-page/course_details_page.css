@@ -1,0 +1,96 @@
+/* Main layout */
+.course-details-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: white;
+    padding: 20px;
+}
+
+/* Sidebar for search */
+.course-details-sidebar {
+    flex: 1;
+    align-self: flex-start; /* ⬅️ this tells JUST the sidebar to stay at top */
+    max-width: 300px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.course-details-sidebar h2 {
+    margin-top: 0;
+}
+
+#course-details-searchBox {
+    width: 200px;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+#course-details-searchBtn {
+    padding: 8px 12px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+/* Content area for course details */
+.course-details-content {
+    flex: 2;
+}
+
+.course-details-content h2 {
+    margin-top: 0;
+}
+
+.course-details-course-item {
+    margin-bottom: 20px; /* or 2rem, 30px, etc. */
+    border-bottom: 1px solid #ccc; /* optional, for visual separation */
+}
+
+.prereq-button {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font: inherit;
+}
+.prereq-button:hover {
+    color: #ffffff;
+}
+
+.rmp-link {
+    color: #007bff;
+    text-decoration: underline;
+}
+.rmp-link:hover {
+    color: #0056b3;
+}
+
+#course-details-filters {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
+
+#course-details-filters h4 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+#course-details-filters label {
+    display: block;
+    margin: 2px 0;
+}
+
+#course-details-filters button {
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 5px 8px;
+    cursor: pointer;
+}

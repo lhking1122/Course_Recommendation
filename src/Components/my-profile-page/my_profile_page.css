@@ -1,0 +1,222 @@
+/* Main layout */
+.my-profile-page-main {
+    display: flex;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+/* Sidebar section */
+.my-profile-page-sidebar {
+    flex: 1;
+    max-width: 300px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    margin-right: 20px;
+    border-radius: 8px;
+}
+
+.my-profile-page-sidebar h2 {
+    margin-top: 0;
+}
+
+.my-profile-page-sidebar p {
+    margin: 10px 0;
+}
+
+/* Main content section */
+.my-profile-page-content {
+    flex: 2;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.05);
+}
+
+.my-profile-page-sidebar h2 {
+    margin-top: 0;
+}
+
+.my-profile-page-input {
+    margin-bottom: 20px;
+}
+
+.my-profile-page-input label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.my-profile-page-input textarea {
+    width: 90%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+button {
+    padding: 10px 16px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+
+/* 多选下拉框的样式 */
+.my-profile-page-multiselect {
+    position: relative;
+    width: 90%;
+}
+
+.my-profile-page-select-box {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    min-height: 20px;
+}
+
+.my-profile-page-select-box:focus {
+    outline: none;
+    border-color: #666;
+}
+
+.my-profile-page-options-container {
+    display: none;
+    position: absolute;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-top: none;
+    background-color: white;
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.my-profile-page-options-container.show {
+    display: block;
+}
+
+.my-profile-page-option {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.my-profile-page-option:hover {
+    background-color: #f0f0f0;
+}
+
+.my-profile-page-option.selected {
+    background-color: #e0e0e0;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    margin: 2px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.tag-remove {
+    margin-left: 4px;
+    cursor: pointer;
+    color: #999;
+}
+
+.tag-remove:hover {
+    color: #555;
+}
+
+.my-profile-page-selectedTags {
+    color: #999;
+}
+
+.my-profile-page-selectedTags.tag {
+    color: #333;
+}
+
+/* 多选下拉框的样式 */
+.multiselect {
+    position: relative;
+    width: 90%;
+}
+
+.select-box {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    min-height: 20px;
+}
+
+.select-box:focus {
+    outline: none;
+    border-color: #666;
+}
+
+.options-container {
+    display: none;
+    position: absolute;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-top: none;
+    background-color: white;
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.options-container.show {
+    display: block;
+}
+
+.option {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.option:hover {
+    background-color: #f0f0f0;
+}
+
+.option.selected {
+    background-color: #e0e0e0;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    margin: 2px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.tag-remove {
+    margin-left: 4px;
+    cursor: pointer;
+    color: #999;
+}
+
+.tag-remove:hover {
+    color: #555;
+}
+
+#selectedTags {
+    color: #999;
+}
+
+#selectedTags .tag {
+    color: #333;
+}
